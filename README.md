@@ -1,1 +1,8 @@
-Despite the increasing availability of health services and resources, health care accessibility has steadily declined. It has become increasingly more complicated to sift through the sea of resources to find one that matches your needs. Thrive Mind is the solution to this disorder. By digitally consolidating all health services available geographically and working closely with health authorities, small or large, Thrive Mind gives control back into those who need it most. What makes Thrive Mind such a powerful navigation tool is its personalized medicine approach. When a user signs up to Thrive Mind, their profile is processed and only relevant services and resources are displayed lowering the complexity of navigating through the medical system. Thrive Mind takes information access one step further by connecting patients with health services through the application. Thrivers no longer have to wonder if they're eligible for coverage or if the GP they are contacting is still taking patients. With Thrive Mind, you can put your mind at ease.
+Run Backend Locally:
+
+cd Thrive_Mind_App
+python3 -m venv .venv
+source venv/bin/activate
+pip install -r requirements.txt
+export set FLASK_APP=webapp
+python3 -m flask run
