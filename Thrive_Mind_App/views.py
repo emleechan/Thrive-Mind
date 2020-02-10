@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request, make_response
 from . import app
 
 @app.route("/")
@@ -26,3 +26,19 @@ def hello_there(name = None):
 @app.route("/api/data")
 def get_data():
     return app.send_static_file("data.json")
+
+@app.route('/unprotected')
+def unprotected():
+    return ''
+
+@app.route('/protected')
+def protected():
+    return 'protect'
+
+@app.route('/login')
+def login():
+    auth = request.authorization
+
+    if auth and auth.password == 'password':
+        return ''
+    return make_response('Could not verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
