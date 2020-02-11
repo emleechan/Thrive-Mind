@@ -1,7 +1,13 @@
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, make_response
+from flask_mysqldb import MySQL
 from . import app
 from auth import token_required, create_token
+from mysql import *
+import mysql.connector
+from mysql.connector import errorcode
+
+
 
 @app.route("/")
 def home():
@@ -45,3 +51,33 @@ def get_token():
 @app.route('/login')
 def login():
     return create_token()
+
+
+@app.route('/database', methods=['GET', 'POST'])
+def createDatabase():
+    # Construct connection string
+    config = {
+        'host':'thriveminddb.mysql.database.azure.com',
+        'user':'pythonuser@thriveminddb',
+        'password':'thrivemindSqlAzure!',
+        'database':'thriveminddb',
+        'ssl_ca':'/Users/emleechxn/Downloads/BaltimoreCyberTrustRoot.crt.pem'
+    }
+    
+    conn = mysql.connector.connect(**config)
+
+    conn.close()
+
+
+        # if request.method == "POST":
+        #     details = request.form
+        #     firstName = details['fname']
+        #     lastName = details['lname']
+        #     cur = mysql.connection.cursor()
+        #     cur.execute("INSERT INTO Users(firstName, lastName) VALUES (%s, %s)", (firstName, lastName))
+        #     mysql.connection.commit()
+        #     cur.close()
+        #     return 'success'
+        # return render_template('database.html')
+
+
