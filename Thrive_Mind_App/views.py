@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, make_response
 from . import app
+from auth import token_required, create_token
 
 @app.route("/")
 def home():
@@ -32,13 +33,15 @@ def unprotected():
     return ''
 
 @app.route('/protected')
+@token_required
 def protected():
-    return 'protect'
+    return jsonify({'message': 'protected route!'})
+
+@app.route('/protected/route')
+@token_required
+def get_token():
+    return ''
 
 @app.route('/login')
 def login():
-    auth = request.authorization
-
-    if auth and auth.password == 'password':
-        return ''
-    return make_response('Could not verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    return create_token()
