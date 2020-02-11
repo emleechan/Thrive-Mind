@@ -1,6 +1,7 @@
-from datetime import datetime
-from flask import Flask, render_template
+from datetime import datetime, timedelta
+from flask import Flask, render_template, jsonify, request, make_response
 from . import app
+from auth import token_required, create_token
 
 @app.route("/")
 def home():
@@ -26,3 +27,21 @@ def hello_there(name = None):
 @app.route("/api/data")
 def get_data():
     return app.send_static_file("data.json")
+
+@app.route('/unprotected')
+def unprotected():
+    return ''
+
+@app.route('/protected')
+@token_required
+def protected():
+    return jsonify({'message': 'protected route!'})
+
+@app.route('/protected/route')
+@token_required
+def get_token():
+    return ''
+
+@app.route('/login')
+def login():
+    return create_token()
