@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 # flask alchemy URI config
 #dialect+driver://username:password@host:port/database
 #mysql://scott:tiger@localhost/mydatabase
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://thriveadmin@thriveminddb:Cmpt474!@thriveminddb.mysql.database.azure.com/thriveminddb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://thriveadmin@thriveminddb:Cmpt474!@thriveminddb.mysql.database.azure.com/thriveminddb'
 
 
 

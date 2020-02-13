@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, make_response
 from flask_mysqldb import MySQL
 from . import app
-# from Thrive_Mind_App.auth import token_required, create_token
+from Thrive_Mind_App.auth import token_required, create_token
 from mysql import *
 import mysql.connector
 from mysql.connector import errorcode
@@ -52,7 +52,7 @@ def unprotected():
 def login():
     db = DatabaseService()
     username = 'bigbertha'
-    passwd = "bittye"
+    passwd = "bitty"
     row_headers, matchingusers = db.execute_select_query("SELECT user_id, first_name, last_name, user_name, user_password, email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan FROM patient WHERE user_name = %s;", (username,))
     if(len(matchingusers)==0):
         print('user doesnt exist')
