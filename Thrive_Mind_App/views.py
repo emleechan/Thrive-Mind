@@ -48,9 +48,19 @@ def unprotected():
 # def get_token():
 #     return ''
 
-@app.route('/login')
+@app.route('/login', methods=['GET'])
 def login():
-    return create_token()
+    db = DatabaseService()
+    username = 'bigbertha'
+    passwd = "bittye"
+    row_headers, matchingusers = db.execute_select_query("SELECT user_id, first_name, last_name, user_name, user_password, email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan FROM patient WHERE user_name = %s;", (username,))
+    if(len(matchingusers)==0):
+        print('user doesnt exist')
+        return 'User is not in DB'   
+    elif(passwd!=matchingusers[0][4]):
+        return 'Wrong Password'
+    else:
+        return create_token()
 
 
 @app.route('/createnewdb', methods=['POST'])
@@ -63,9 +73,16 @@ def createDatabase():
 @app.route('/createnewuser', methods=['POST'])
 def create_new_user():
     db = DatabaseService()
-    rowcount = db.execute_insert_query("INSERT INTO patient (first_name, last_name, user_name, user_password,email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", ("Bob", "Smith", "bobsmith", "hunter12", "bob.smith@smith.com", "123-123-123", True, "Anxiety", "Xanax", "require hearing aid", "blue cross"))
+    # new_user =
+    username = 'bigbertha' # case1 user exists
+    row_headers, matchingusers = db.execute_select_query("SELECT user_id, first_name, last_name, user_name, user_password, email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan FROM patient WHERE user_name = %s;", (username,))
+    if (len(matchingusers)!= 0):
+        return 'User exists'
+    else:
+        rowcount = db.execute_insert_query("INSERT INTO patient (first_name, last_name, user_name, user_password,email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",)
     return "Inserted {} rows.".format(rowcount)
-
+#  ("Bertha", "Ravenclaw", "bigbertha", "bitty", "bigbertha@hahoo.com", "223-333-323", True, "Being Old", "oxy", "require walking aid", "red cross")
+# ("Bob", "Smith", "bobsmith", "hunter12", "bob.smith@smith.com", "123-123-123", True, "Anxiety", "Xanax", "require hearing aid", "blue cross"),
 
 @app.route('/getuser/<userid>', methods=['GET'])
 def get_user_by_id(userid):
@@ -83,3 +100,4 @@ def get_users():
         jsondata.append(dict(zip(row_headers,user)))
     jsonresult = json.dumps(jsondata)
     return "{}".format(jsonresult)
+
