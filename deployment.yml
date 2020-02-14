@@ -1,0 +1,19 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: thrive-mind-api
+spec:
+  selector:
+    matchLabels:
+      app: thrive-mind-api
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: thrive-mind-api
+    spec:
+      containers:
+        - name: thrive-mind-api
+          image: ddkpham/thrive-mind:v2
+          ports:
+            - containerPort: 80

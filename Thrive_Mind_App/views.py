@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, make_response
-from . import app
+from __init__ import app
 from auth import token_required, create_token
 
 @app.route("/")
@@ -45,3 +45,6 @@ def get_token():
 @app.route('/login')
 def login():
     return create_token()
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port="80")
