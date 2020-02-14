@@ -31,7 +31,7 @@ class DatabaseService():
     print("Finished dropping HEALTHCARESERVICE table (if existed).")
 
     # Create patient table
-    cursor.execute("CREATE TABLE patient (user_id serial PRIMARY KEY, first_name VARCHAR(50), last_name VARCHAR(50), user_name VARCHAR(50), user_password VARCHAR(50), email_address VARCHAR(50), phone VARCHAR(50), is_seeking BOOLEAN, medical_history VARCHAR(50), current_prescription VARCHAR(50), preferences VARCHAR(50), health_care_plan VARCHAR(50));")
+    cursor.execute("CREATE TABLE patient (user_id serial PRIMARY KEY, first_name VARCHAR(50), last_name VARCHAR(50), user_name VARCHAR(50) UNIQUE, user_password VARCHAR(50), email_address VARCHAR(50) UNIQUE, phone VARCHAR(50), is_seeking BOOLEAN, medical_history VARCHAR(50), current_prescription VARCHAR(50), preferences VARCHAR(50), health_care_plan VARCHAR(50));")
     print("Finished creating PATIENT table.")
 
     # Create healthcareservice table
