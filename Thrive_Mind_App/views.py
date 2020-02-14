@@ -8,6 +8,8 @@ import mysql.connector
 from mysql.connector import errorcode
 from database.DatabaseService import DatabaseService
 import json
+from flask import request
+from flask import abort
 
 @app.route("/")
 def home():
@@ -94,4 +96,58 @@ def get_users():
         jsondata.append(dict(zip(row_headers,user)))
     jsonresult = json.dumps(jsondata)
     return "{}".format(jsonresult)
+
+@app.route('/services', methods=['GET'])
+def health_services_get():
+    db = DatabaseService()
+    row_headers, matchingservices = db.execute_select_query("SELECT id, name, description, email_address, phone, is_accepting FROM healthcareservice LIMIT 20;", ())
+    jsondata = []
+    for service in matchingservices:
+        jsondata.append(dict(zip(row_headers, service)))
+    jsonresult = json.dumps(jsondata)
+
+    resp = make_response(jsonresult)
+    resp.headers['Content-Type'] = "application/json"
+
+    return resp
+
+@app.route('/services/search', methods=['GET'])
+def health_services_search():
+    name = request.args.get('name')
+    description = request.args.get('description')
+    email = request.args.get('email')
+    isAcceptingStr = request.args.get('isAccepting')
+
+    query_wheres = []
+    query_values = []
+    if name is not None:
+        query_wheres.append("name LIKE %s")
+        query_values.append("%" + name + "%")
+    if description is not None:
+        query_wheres.append("description LIKE %s")
+        query_values.append("%" + description + "%")
+    if email is not None:
+        query_wheres.append("email LIKE %s")
+        query_values.append("%" + email + "%")
+    if isAcceptingStr is not None:
+        query_wheres.append("is_accepting LIKE %s")
+        query_values.append("%" + isAcceptingStr + "%")
+    if len(query_wheres) == 0:
+        abort(404)
+
+    query_wheres_str = " and ".join(query_wheres)
+
+    queryStr = "SELECT id, name, description, email_address, phone, is_accepting FROM healthcareservice WHERE " + query_wheres_str + " LIMIT 20;"
+
+    db = DatabaseService()
+    row_headers, matchingservices = db.execute_select_query(queryStr, query_values)
+    jsondata = []
+    for service in matchingservices:
+        jsondata.append(dict(zip(row_headers, service)))
+    jsonresult = json.dumps(jsondata)
+
+    resp = make_response(jsonresult)
+    resp.headers['Content-Type'] = "application/json"
+
+    return resp
 
