@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, make_response
 from flask_mysqldb import MySQL
-from . import app
-from Thrive_Mind_App.auth import token_required, create_token, token_decode
+from __init__ import app
+from auth import token_required, create_token, token_decode
 from mysql import *
 import mysql.connector
 from mysql.connector import errorcode
@@ -147,3 +147,6 @@ def health_services_search():
 
     return resp
 
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port="80")
