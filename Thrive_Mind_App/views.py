@@ -62,14 +62,20 @@ def createDatabase():
 def create_new_user():
     db = DatabaseService()
     req_data = request.get_json()
+    role = req_data['role']
+    print(req_data)
     username = req_data['user_name']
+    null ='null'
     row_headers, matchingusers = db.execute_select_query("SELECT user_id,  user_name, user_password FROM patient WHERE user_name = %s;", (username,))
     if (len(matchingusers)!= 0):
         return 'User exists', 400
     else:
-        rowcount = db.execute_insert_query("INSERT INTO patient (first_name, last_name, user_name, user_password,email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
-        (req_data['first_name'],req_data['last_name'],username,req_data['user_password'],req_data['email_address'],req_data['phone'],req_data['is_seeking'],req_data['medical_history'],
-        req_data['current_prescription'],req_data['preferences'],req_data['health_care_plan']))
+        if role == 'Patient':
+            rowcount = db.execute_insert_query("INSERT INTO patient (first_name, last_name, user_name, user_password,email_address, phone, is_seeking) VALUES (%s, %s, %s, %s, %s, %s, %s);",
+            (req_data['first_name'],req_data['last_name'],username,req_data['user_password'],req_data['email_address'],req_data['phone'],req_data['is_seeking']))
+        else:
+            rowcount = db.execute_insert_query("INSERT INTO healthcareservice (name,description,email_address, phone) VALUES (%s, %s, %s, %s);",
+            (username,req_data['email_address'],req_data['phone'],null))
     return "Inserted {} rows.".format(rowcount)
 
 # DEBUGGING ENDPOINT
@@ -109,10 +115,11 @@ def health_services_get():
 @app.route('/services/search', methods=['GET'])
 @token_required
 def health_services_search():
-    name = request.args.get('name')
-    description = request.args.get('description')
-    email = request.args.get('email')
-    isAcceptingStr = request.args.get('isAccepting')
+    name = request.args.get('search')
+    print('search', name)
+    description = request.args.get('search')
+    email = request.args.get('search')
+    isAcceptingStr = request.args.get('search')
 
     query_wheres = []
     query_values = []
@@ -122,12 +129,12 @@ def health_services_search():
     if description is not None:
         query_wheres.append("description LIKE %s")
         query_values.append("%" + description + "%")
-    if email is not None:
-        query_wheres.append("email LIKE %s")
-        query_values.append("%" + email + "%")
-    if isAcceptingStr is not None:
-        query_wheres.append("is_accepting LIKE %s")
-        query_values.append("%" + isAcceptingStr + "%")
+    # if email is not None:
+    #     query_wheres.append("email LIKE %s")
+    #     query_values.append("%" + email + "%")
+    # if isAcceptingStr is not None:
+    #     query_wheres.append("is_accepting LIKE %s")
+    #     query_values.append("%" + isAcceptingStr + "%")
     if len(query_wheres) == 0:
         abort(404)
 

@@ -24,7 +24,7 @@ def token_required(f):
     return decorated
 
 def create_token(userid):
-    token = jwt.encode({'user_id': userid, 'exp': datetime.utcnow() - timedelta(minutes=50) }, app.config['SECRET_KEY'])
+    token = jwt.encode({'user_id': userid, 'exp': datetime.utcnow() + timedelta(minutes=1000) }, app.config['SECRET_KEY'])
     return jsonify({'token': token.decode('UTF-8')})
 
 def token_decode(token):
