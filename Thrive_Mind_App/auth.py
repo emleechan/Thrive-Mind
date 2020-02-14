@@ -8,22 +8,25 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.headers
-        token = auth.get('x-access-token') 
+        token = auth.get('x-access-token')
 
         if not token:
             return jsonify({'message': 'Token is missing!'}), 403
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token is expired!'}), 403
         except:
             return jsonify({'message': 'Token is missing or invalid!'}), 403
+
         return f(*args, **kwargs)
     return decorated
 
 def create_token(userid):
-    token = jwt.encode({'user_id': userid, 'exp': datetime.utcnow() + timedelta(minutes=50) }, app.config['SECRET_KEY'])
+    token = jwt.encode({'user_id': userid, 'exp': datetime.utcnow() - timedelta(minutes=50) }, app.config['SECRET_KEY'])
     return jsonify({'token': token.decode('UTF-8')})
 
-def plaintxt(token):
+def token_decode(token):
     result = jwt.decode(token, app.config['SECRET_KEY'])
     return result

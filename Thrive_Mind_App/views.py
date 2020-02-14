@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, make_response
 from flask_mysqldb import MySQL
 from . import app
-from Thrive_Mind_App.auth import token_required, create_token, plaintxt
+from Thrive_Mind_App.auth import token_required, create_token, token_decode
 from mysql import *
 import mysql.connector
 from mysql.connector import errorcode
@@ -24,7 +24,7 @@ def unprotected():
     return ''
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 def login():
     db = DatabaseService()
     req_data = request.get_json()
@@ -32,9 +32,9 @@ def login():
     username = req_data['user_name']
     row_headers, matchingusers = db.execute_select_query("SELECT user_id, first_name, last_name, user_name, user_password, email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan FROM patient WHERE user_name = %s;", (username,))
     if(len(matchingusers)==0):
-        return 'User is not in DB'   
+        return 'User is not in DB', 400
     elif(passwd!=matchingusers[0][4]):
-        return 'Wrong Password'
+        return 'Wrong Password', 400
     else:
         return create_token(matchingusers[0][0])
 
@@ -45,11 +45,8 @@ def profile():
     db = DatabaseService()
     req_data = request.get_json()
     token = request.headers.get('x-access-token')
-    encrpytDict = plaintxt(token)
+    encrpytDict = token_decode(token)
     user_idCheck = encrpytDict['user_id']
-    print(user_idCheck)
-    # userID = req_data['user_id']
-    # passwd = req_data['user_password']
     row_headers, matchinguser = db.execute_select_query("SELECT user_id, first_name, last_name, user_name, user_password, email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan FROM patient WHERE user_id = %s;", (user_idCheck,))
     jsonresult = json.dumps(dict(zip(row_headers,matchinguser[0])))
     return "{}".format(jsonresult)
@@ -61,33 +58,30 @@ def createDatabase():
     return 'SUCCESS'
 
 
-@app.route('/createnewuser', methods=['POST'])
-@token_required
+@app.route('/register', methods=['POST'])
 def create_new_user():
     db = DatabaseService()
     req_data = request.get_json()
     username = req_data['user_name']
     row_headers, matchingusers = db.execute_select_query("SELECT user_id,  user_name, user_password FROM patient WHERE user_name = %s;", (username,))
     if (len(matchingusers)!= 0):
-        return 'User exists'
+        return 'User exists', 400
     else:
         rowcount = db.execute_insert_query("INSERT INTO patient (first_name, last_name, user_name, user_password,email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
         (req_data['first_name'],req_data['last_name'],username,req_data['user_password'],req_data['email_address'],req_data['phone'],req_data['is_seeking'],req_data['medical_history'],
         req_data['current_prescription'],req_data['preferences'],req_data['health_care_plan']))
     return "Inserted {} rows.".format(rowcount)
-#  ("Bertha", "Ravenclaw", "bigbertha", "bitty", "bigbertha@hahoo.com", "223-333-323", True, "Being Old", "oxy", "require walking aid", "red cross")
-# ("Bob", "Smith", "bobsmith", "hunter12", "bob.smith@smith.com", "123-123-123", True, "Anxiety", "Xanax", "require hearing aid", "blue cross"),
 
+# DEBUGGING ENDPOINT
 @app.route('/getuser/<userid>', methods=['GET'])
-@token_required
 def get_user_by_id(userid):
     db = DatabaseService()
     row_headers, matchinguser = db.execute_select_query("SELECT user_id, first_name, last_name, user_name, user_password, email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan FROM patient WHERE user_id = %s;", (userid,))
     jsonresult = json.dumps(dict(zip(row_headers,matchinguser[0])))
     return "{}".format(jsonresult)
 
+# DEBUGGING ENDPOINT
 @app.route('/getusers', methods=['GET'])
-@token_required
 def get_users():
     db = DatabaseService()
     row_headers, matchingusers = db.execute_select_query("SELECT user_id, first_name, last_name, user_name, user_password, email_address, phone, is_seeking, medical_history, current_prescription, preferences, health_care_plan FROM patient LIMIT 20;", ())
@@ -98,6 +92,7 @@ def get_users():
     return "{}".format(jsonresult)
 
 @app.route('/services', methods=['GET'])
+@token_required
 def health_services_get():
     db = DatabaseService()
     row_headers, matchingservices = db.execute_select_query("SELECT id, name, description, email_address, phone, is_accepting FROM healthcareservice LIMIT 20;", ())
@@ -112,6 +107,7 @@ def health_services_get():
     return resp
 
 @app.route('/services/search', methods=['GET'])
+@token_required
 def health_services_search():
     name = request.args.get('name')
     description = request.args.get('description')
