@@ -38,19 +38,24 @@ class Patient(Model):
  
  
 def profile_get(event, context):
-   patient_item = Patient.get(event['pid'])
-   
-   ret = {
+    print("Event:")
+    print(event)
+    patient_item = Patient.get(event['requestContext']['authorizer']['claims']['sub'])
+
+    ret = {
         "isBase64Encoded": False,
         "statusCode": 200,
         "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
         "body": json_dumps(patient_item)
     }
 
-   return ret
+    return ret
 
 def profile_update(event, context):
-    patient_item = Patient.get(event['pid'])
+    print("Event:")
+    print(event)
+    patient_item = Patient.get(event['requestContext']['authorizer']['claims']['sub'])
+    
     patient_item.update(actions=[
         Patient.first_name.set(event['first_name']),
         Patient.last_name.set(event['last_name']),
