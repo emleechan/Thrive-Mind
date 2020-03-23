@@ -3,8 +3,8 @@
 set -ex
 
 # Download the dependencies
-#rm -rf package
-#pip3 install --upgrade pynamodb -t package
+rm -rf package
+pip3 install --upgrade pynamodb -t package
 
 # Create the zip file
 rm -f lambdafunctions.zip
