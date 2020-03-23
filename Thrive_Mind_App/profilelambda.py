@@ -19,7 +19,7 @@ def json_dumps(obj):
  
 class Patient(Model):
    class Meta:
-       table_name = "patient"
+       table_name = "healthcareservice-patient"
        region = 'us-east-1'
        read_capacity_units = 1
        write_capacity_units = 1
@@ -44,11 +44,28 @@ def profile_get(event, context):
         "isBase64Encoded": False,
         "statusCode": 200,
         "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
-        "body": json.dumps(patient_item)
+        "body": json_dumps(patient_item)
     }
 
    return ret
 
 def profile_update(event, context):
-    # code goes here
-    return {}
+    patient_item = Patient.get(event['pid'])
+    patient_item.update(actions=[
+        Patient.first_name.set(event['first_name']),
+        Patient.last_name.set(event['last_name']),
+        Patient.user_password.set(event['user_password']),
+        Patient.email_address.set(event['email_address']),
+        Patient.phone.set(event['phone']),
+        Patient.is_seeking.set(event['is_seeking']),
+        Patient.medical_history.set(event['medical_history']),
+        Patient.current_prescription.set(event['current_prescription']),
+        Patient.preferences.set(event['preferences']),
+        Patient.health_care_plan.set(event['health_care_plan'])
+    ])
+    return {
+        "isBase64Encoded": False,
+        "statusCode": 200,
+        "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
+        "body": json_dumps(patient_item)
+   }
