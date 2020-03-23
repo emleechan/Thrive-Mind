@@ -37,9 +37,13 @@ class Patient(Model):
    health_care_plan = UnicodeAttribute()
  
  
-def lambda_handler(event, context):
+def profile_get(event, context):
    patient_item = Patient.get(event['pid'])
    return {
        'statusCode': 200,
        'body': json_dumps(patient_item)
    }
+
+def profile_update(event, context):
+    # code goes here
+    return {}

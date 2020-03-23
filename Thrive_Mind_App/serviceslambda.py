@@ -21,14 +21,11 @@ class HealthcareServiceModel(Model):
     is_accepting = BooleanAttribute()
 
 
-def lambda_handler(event, context):
+def services_get(event, context):
     services = []
     for item in HealthcareServiceModel.scan(limit=20):
         services.append(item.attribute_values)
 
-    ret = {
-        'statusCode': 200,
-        'body': json.dumps(services)
-    }
+    ret = { 'services': services }
 
     return ret
