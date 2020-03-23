@@ -39,10 +39,15 @@ class Patient(Model):
  
 def profile_get(event, context):
    patient_item = Patient.get(event['pid'])
-   return {
-       'statusCode': 200,
-       'body': json_dumps(patient_item)
-   }
+   
+   ret = {
+        "isBase64Encoded": False,
+        "statusCode": 200,
+        "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
+        "body": json.dumps(patient_item)
+    }
+
+   return ret
 
 def profile_update(event, context):
     # code goes here

@@ -26,6 +26,11 @@ def services_get(event, context):
     for item in HealthcareServiceModel.scan(limit=20):
         services.append(item.attribute_values)
 
-    ret = { 'services': services }
+    ret = {
+        "isBase64Encoded": False,
+        "statusCode": 200,
+        "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
+        "body": json.dumps(services)
+    }
 
     return ret
