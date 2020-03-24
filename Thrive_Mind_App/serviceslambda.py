@@ -17,7 +17,7 @@ class HealthcareServiceModel(Model):
     name = UnicodeAttribute()
     description = UnicodeAttribute()
     email_address = UnicodeAttribute()
-    phone_number = UnicodeAttribute()
+    phone = UnicodeAttribute()
     is_accepting = BooleanAttribute()
 
 
