@@ -13,11 +13,11 @@ class HealthcareServiceModel(Model):
     class Meta:
         table_name = 'healthcareservice-service'
         region = 'us-east-1'
-    id = UnicodeAttribute(hash_key=True)
+    hid = UnicodeAttribute(hash_key=True)
     name = UnicodeAttribute()
     description = UnicodeAttribute()
     email_address = UnicodeAttribute()
-    phone_number = UnicodeAttribute()
+    phone = UnicodeAttribute()
     is_accepting = BooleanAttribute()
 
 
