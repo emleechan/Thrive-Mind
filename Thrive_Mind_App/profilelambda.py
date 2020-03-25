@@ -52,28 +52,37 @@ def profile_get(event, context):
     return ret
 
 def profile_update(event, context):
-    print("Event:")
-    print(event)
-    patient_item = Patient.get(event['requestContext']['authorizer']['claims']['sub'])
+    try:
+        print("Event:")
+        print(event)
+        patient_item = Patient.get(event['requestContext']['authorizer']['claims']['sub'])
 
-    body = event['body']
-    body = json.loads(body)
+        body = event['body']
+        body = json.loads(body)
 
-    
-    patient_item.update(actions=[
-        Patient.first_name.set(body['first_name']),
-        Patient.last_name.set(body['last_name']),
-        Patient.email_address.set(body['email_address']),
-        Patient.phone.set(body['phone']),
-        Patient.is_seeking.set(body['is_seeking']),
-        Patient.medical_history.set(body['medical_history']),
-        Patient.current_prescription.set(body['current_prescription']),
-        Patient.preferences.set(body['preferences']),
-        Patient.health_care_plan.set(body['health_care_plan'])
-    ])
-    return {
-        "isBase64Encoded": False,
-        "statusCode": 200,
-        "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
-        "body": json_dumps(patient_item)
-   }
+        
+        patient_item.update(actions=[
+            Patient.first_name.set(body['first_name']),
+            Patient.last_name.set(body['last_name']),
+            Patient.email_address.set(body['email_address']),
+            Patient.phone.set(body['phone']),
+            Patient.is_seeking.set(body['is_seeking']),
+            Patient.medical_history.set(body['medical_history']),
+            Patient.current_prescription.set(body['current_prescription']),
+            Patient.preferences.set(body['preferences']),
+            Patient.health_care_plan.set(body['health_care_plan'])
+        ])
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 200,
+            "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
+            "body": json_dumps(patient_item)
+        }
+    except:
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 500,
+            "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials" : True},
+            "body": json_dumps({ "Error": "Exception was thrown in Lambda function!" })
+        }
+
