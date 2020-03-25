@@ -32,6 +32,7 @@ class ViewIndex(GlobalSecondaryIndex):
         projection = AllProjection()
 
 def services_get(event, context):
+    print(event)
     services = []
     for item in HealthcareServiceModel.scan(limit=20):
         services.append(item.attribute_values)

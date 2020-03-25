@@ -55,18 +55,21 @@ def profile_update(event, context):
     print("Event:")
     print(event)
     patient_item = Patient.get(event['requestContext']['authorizer']['claims']['sub'])
+
+    body = event['body']
+    body = json.loads(body)
+
     
     patient_item.update(actions=[
-        Patient.first_name.set(event['first_name']),
-        Patient.last_name.set(event['last_name']),
-        Patient.user_password.set(event['user_password']),
-        Patient.email_address.set(event['email_address']),
-        Patient.phone.set(event['phone']),
-        Patient.is_seeking.set(event['is_seeking']),
-        Patient.medical_history.set(event['medical_history']),
-        Patient.current_prescription.set(event['current_prescription']),
-        Patient.preferences.set(event['preferences']),
-        Patient.health_care_plan.set(event['health_care_plan'])
+        Patient.first_name.set(body['first_name']),
+        Patient.last_name.set(body['last_name']),
+        Patient.email_address.set(body['email_address']),
+        Patient.phone.set(body['phone']),
+        Patient.is_seeking.set(body['is_seeking']),
+        Patient.medical_history.set(body['medical_history']),
+        Patient.current_prescription.set(body['current_prescription']),
+        Patient.preferences.set(body['preferences']),
+        Patient.health_care_plan.set(body['health_care_plan'])
     ])
     return {
         "isBase64Encoded": False,
