@@ -70,7 +70,7 @@ def create_new_user():
     if (len(matchingusers)!= 0):
         return 'User exists', 400
     else:
-     rowcount = db.execute_insert_query("INSERT INTO patient (first_name, last_name, user_name, user_password,email_address, phone, is_seeking) VALUES (%s, %s, %s, %s, %s, %s, %s);",
+        rowcount = db.execute_insert_query("INSERT INTO patient (first_name, last_name, user_name, user_password,email_address, phone, is_seeking) VALUES (%s, %s, %s, %s, %s, %s, %s);",
         (req_data['first_name'],req_data['last_name'],username,req_data['user_password'],req_data['email_address'],req_data['phone'],req_data['is_seeking']))
     return "Inserted {} rows.".format(rowcount)
 
