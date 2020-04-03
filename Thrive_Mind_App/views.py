@@ -94,13 +94,34 @@ def get_users():
     return "{}".format(jsonresult)
 
 @app.route('/services', methods=['GET'])
-@token_required
 def health_services_get():
+    print("Request headers:")
+    print(request.headers)
+    print("Azure secret header: ")
+    
+    # Going to require a special secret sent by our API gateway to auth this api, since we're exposed to public
+    azure_secret_header = "not received"
+    try:
+        azure_secret_header = request.headers['X-Azure-Secret-Header']
+    except KeyError:
+        pass
+    print(azure_secret_header)
+    if azure_secret_header != "u7qYDHWs8dZsBFK5qGlgwnYN3LKQCETitejYbvBEEPEyxa0HR5Vk0FTAaZz4k0tEn1ktuz3hcO6vpvsYvgPKHSHkF1oi6WRBeKrLEPEyxa0HR5Vk0FTAaZz4":
+        abort(403)
+
+    # Auth successful, lets get the data from the db
     db = DatabaseService()
     row_headers, matchingservices = db.execute_select_query("SELECT id, name, description, email_address, phone, is_accepting FROM healthcareservice LIMIT 20;", ())
+    row_headers[0] = "hid"
     jsondata = []
     for service in matchingservices:
-        jsondata.append(dict(zip(row_headers, service)))
+        dictservice = dict(zip(row_headers, service))
+        if dictservice['is_accepting'] == 1:
+            dictservice['is_accepting'] = True
+        else:
+            dictservice['is_accepting'] = False
+        jsondata.append(dictservice)
+    
     jsonresult = json.dumps(jsondata)
 
     resp = make_response(jsonresult)
