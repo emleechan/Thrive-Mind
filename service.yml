@@ -14,8 +14,11 @@
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: temp-PI3-resources
   name: thrive-mind-api
 spec:
+  loadBalancerIP: 52.188.223.13
   type: LoadBalancer
   ports:
     - port: 80
