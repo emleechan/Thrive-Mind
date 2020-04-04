@@ -138,7 +138,7 @@ def health_services_get():
     for user in user_collection.find():
         #print(user)
         del user["_id"]
-        services.append(dumps(user))
+        services.append(user)
     jsonresult = json.dumps(services)
     resp = make_response(jsonresult)
     resp.headers['Content-Type'] = "application/json"
