@@ -12,7 +12,7 @@ class HealthcareServiceModel(Model):
     A HealthcareService service
     """
     class Meta:
-        table_name = 'healthcareservice-service'
+        table_name = 'healthcareservice-service-PI3'
         region = 'us-east-1'
     hid = UnicodeAttribute(hash_key=True)
     name = UnicodeAttribute()

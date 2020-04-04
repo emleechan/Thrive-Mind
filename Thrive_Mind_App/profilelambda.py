@@ -19,7 +19,7 @@ def json_dumps(obj):
  
 class Patient(Model):
    class Meta:
-       table_name = "healthcareservice-patient"
+       table_name = "healthcareservice-patient-PI3"
        region = 'us-east-1'
        read_capacity_units = 1
        write_capacity_units = 1

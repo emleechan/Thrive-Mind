@@ -11,7 +11,7 @@ class HealthcareServiceModel(Model):
     A HealthcareService service
     """
     class Meta:
-        table_name = 'healthcareservice-service'
+        table_name = 'healthcareservice-service-PI3'
         region = 'us-east-1'
     hid = UnicodeAttribute(hash_key=True)
     name = UnicodeAttribute()
@@ -47,7 +47,7 @@ if not HealthcareServiceModel.exists():
 # INSERT PATIENT DB CREATION STUFF HERE
 class PatientModel(Model):
    class Meta:
-       table_name = "healthcareservice-patient"
+       table_name = "healthcareservice-patient-PI3"
        region = 'us-east-1'
        read_capacity_units = 1
        write_capacity_units = 1
