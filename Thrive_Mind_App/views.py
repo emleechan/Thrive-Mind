@@ -99,6 +99,33 @@ def get_users():
     jsonresult = json.dumps(jsondata)
     return "{}".format(jsonresult)
 
+@app.route('/createhealthservicedb', methods=['POST'])
+def create_table_and_add():
+    # Auth successful, lets get the data from the db
+    db_name = "healthcareservice"
+    host = os.getenv("thriveminddb.mongo.cosmos.azure.com")
+    connection_uri = "mongodb://thriveminddb:3ZVHbEQKjE7AwuaAFW5fIosnK7F5lr9ECQj9WgMSrzft3TQps8EsluPUCbgB1TFwWnTq2dSjLDy6eZcQilIwFg==@thriveminddb.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@thriveminddb@"
+    client = MongoClient(connection_uri)
+
+    try:
+        info = client.server_info() # Forces a call.
+    except ServerSelectionTimeoutError:
+        print("server is down.")
+
+    dblist = client.list_database_names()
+    if "healthcareservice" in dblist:
+        return "The database exists."
+    else:
+        db = client['healthcareservice']
+        user_collection = db['hid']
+
+        user_collection.insert([{"hid": "e8898c0e-0589-4918-b683-7dfd08940a42", "description": "This is where you go if you get seriously hurt :/", "is_accepting": True, "name": "Surrey Memorial Hospital", "phone": "(666) 666-6666", "email_address": "surreym@hospital.com"}, {"hid": "774bcecc-3f08-4fe9-b977-834d256f342c", "description": "This is a description of a different service", "is_accepting": True, "name": "someotherservice", "phone": "(666) 666-6666", "email_address": "service3@somethingelse.com"}, {"hid": "d7e1f752-bc3a-4350-affc-9211b5596b83", "description": "Fever? Headache? Shortness of breath? Come test yourself safely, here!", "is_accepting": False, "name": "COVID-19 Test Drive-Thru", "phone": "(604) 123-4567", "email_address": "covid19@humanityisdoomed.com"}, {"hid": "5d92d5f6-74db-44ee-9f1a-5f4fc99a862a", "description": "Going on vacation? Get your vac(cin)ations!", "is_accepting": True, "name": "Travel Medical Clinic", "phone": "(778) 434-3102", "email_address": "travelmedical@vaccinations.com"}, {"hid": "cfde0a10-b45b-4002-a2b3-c9df87718ac6", "description": "Don't settle for second-best public counseling from a school... go private!", "is_accepting": False, "name": "ABC Private Counseling", "phone": "(202) 321-2485", "email_address": "ABC@private.com"}, {"hid": "012fa2e0-8cd4-4d6e-ba43-38bfa07e3ac1", "description": "Don't listen to the media, get your state-sponsored 'facts' here!", "is_accepting": True, "name": "CoronaVirus Info Center", "phone": "(987) 654-2934", "email_address": "coronavirus@isnotreal.com"}, {"hid": "557e0802-7e57-4e71-b93c-3b262c287f41", "description": "This is a description of healthcare service 1", "is_accepting": True, "name": "healthcareservice1", "phone": "(101) 301-0485", "email_address": "service1@healthcare.com"}, {"hid": "fa3b3826-431a-4681-b8c3-24d95f71a83f", "description": "This is a description of healthcare service 2", "is_accepting": False, "name": "healthcareservice2", "phone": "(202) 321-2485", "email_address": "service2@healthcare.com"}, {"hid": "f0a97661-007a-4ed4-9c34-130a39541e66", "description": "Find a counselor today, covered by your student insurance, today!", "is_accepting": True, "name": "SFU Counseling", "phone": "(101) 301-0485", "email_address": "sfucounseling@sfu.ca"}])
+
+        for user in user_collection.find():
+            print(user)
+        return "Database created."
+    
+
 @app.route('/services', methods=['GET'])
 def health_services_get():
     print("Request headers:")
@@ -118,11 +145,6 @@ def health_services_get():
     # Auth successful, lets get the data from the db
     db_name = "healthcareservice"
     host = os.getenv("thriveminddb.mongo.cosmos.azure.com")
-    port = 10255
-    username = os.getenv("thriveminddb")
-    password = os.getenv("3ZVHbEQKjE7AwuaAFW5fIosnK7F5lr9ECQj9WgMSrzft3TQps8EsluPUCbgB1TFwWnTq2dSjLDy6eZcQilIwFg==")
-    args = "ssl=true&retrywrites=false&ssl_cert_reqs=CERT_NONE"
-
     connection_uri = "mongodb://thriveminddb:3ZVHbEQKjE7AwuaAFW5fIosnK7F5lr9ECQj9WgMSrzft3TQps8EsluPUCbgB1TFwWnTq2dSjLDy6eZcQilIwFg==@thriveminddb.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@thriveminddb@"
     client = MongoClient(connection_uri)
 
